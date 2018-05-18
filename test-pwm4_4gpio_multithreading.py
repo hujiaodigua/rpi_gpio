@@ -29,6 +29,10 @@ IN4 = GPIO.PWM(IN4, 50)  # 通道为 23 频率为 50Hz
 control_flag = b'null'
 speed = 0
 
+s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect(('192.168.0.101', 7777))
+s.send(b'connect ok')
+
 def Left_Motor(speed):
         global control_flag
         print('Left_Motor')
@@ -94,6 +98,24 @@ def Right_Motor(speed):
                         IN3.ChangeDutyCycle(100)
                         IN4.ChangeDutyCycle(100)
 
+#def tcp_recv_control_flag(speed):
+#        global control_flag
+#        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+#        s.connect(('192.168.0.101', 7777))
+#        s.send(b'connect ok')
+#        
+#        while True:
+#                control_flag = s.recv(20)
+#                if control_flag == b'cutoff':
+#                        IN1.stop()
+#                        IN2.stop()
+#                        IN3.stop()
+#                        IN4.stop()
+#                        GPIO.cleanup()
+#                        print('Over')
+#                        sys.exit(0)
+#                        break
+        
 if __name__ == "__main__":
     try:
         _thread.start_new_thread( Left_Motor, (speed,))
@@ -101,23 +123,36 @@ if __name__ == "__main__":
     except Exception as err:
         print("error:unable to start thread")
         print(err)
-    
-    control_flag = b'w'
-    time.sleep(1)
-    control_flag = b'a'
-    time.sleep(1)
-    control_flag = b'd'
-    time.sleep(1)
-    control_flag = b's'
-    time.sleep(1)
-    control_flag = b'q'
-    time.sleep(1)
+
+    while True:
+            control_flag = s.recv(20)
+            if control_flag == b'cutoff':
+                s.send(b'cut connect')
+                IN1.stop()
+                IN2.stop()
+                IN3.stop()
+                IN4.stop()
+                GPIO.cleanup()
+                print('Over')
+                sys.exit(0)
+                break
+
+#    control_flag = b'w'
+#    time.sleep(1)
+#    control_flag = b'a'
+#    time.sleep(1)
+#    control_flag = b'd'
+#    time.sleep(1)
+#    control_flag = b's'
+#    time.sleep(1)
+#    control_flag = b'q'
+#    time.sleep(1)
   
-    IN1.stop()
-    IN2.stop()
-    IN3.stop()
-    IN4.stop()
-    GPIO.cleanup()
-    print('Over')
-    sys.exit(0)
+#    IN1.stop()
+#    IN2.stop()
+#    IN3.stop()
+#    IN4.stop()
+#    GPIO.cleanup()
+#    print('Over')
+#    sys.exit(0)
 
