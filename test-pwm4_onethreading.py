@@ -28,7 +28,7 @@ IN4 = GPIO.PWM(IN4, 2000)  # 通道为 25 频率为 2000Hz
 
 control_flag = b'null'
 speed = 0
-dc = 35
+dc = 25
 
 s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 s.connect(('192.168.0.101', 7777))
@@ -40,32 +40,44 @@ def Left_Motor(speed):
         #启动左电机
         IN1.start(0)
         IN2.start(0)
+        IN3.start(0)
+        IN4.start(0)
         
         while True:
                 if control_flag == b'w': #直行
                         #左电机正转
                         IN1.ChangeDutyCycle(dc)
                         IN2.ChangeDutyCycle(0) #全高电平
+                        IN3.ChangeDutyCycle(dc)
+                        IN4.ChangeDutyCycle(0)                
                         
                 elif  control_flag == b'd': #右转
                         #左电机正转
                         IN1.ChangeDutyCycle(dc)
-                        IN2.ChangeDutyCycle(0)      
+                        IN2.ChangeDutyCycle(0)    
+                        IN3.ChangeDutyCycle(0)
+                        IN4.ChangeDutyCycle(0)                           
                           
                 elif  control_flag == b'a': #左转
                         #左电机不转
                         IN1.ChangeDutyCycle(0)
                         IN2.ChangeDutyCycle(0)
+                        IN3.ChangeDutyCycle(dc)
+                        IN4.ChangeDutyCycle(0)                        
                 
                 elif  control_flag == b's': #倒车
                         #左电机反转
                         IN1.ChangeDutyCycle(0)
                         IN2.ChangeDutyCycle(dc)
+                        IN3.ChangeDutyCycle(0)
+                        IN4.ChangeDutyCycle(dc)                            
                 
                 elif  control_flag == b'q': #停车
                         #左电机不转
                         IN1.ChangeDutyCycle(0)
                         IN2.ChangeDutyCycle(0)
+                        IN3.ChangeDutyCycle(0)
+                        IN4.ChangeDutyCycle(0)                        
 
 def Right_Motor(speed):
         global control_flag
@@ -120,7 +132,7 @@ def Right_Motor(speed):
 if __name__ == "__main__":
     try:
         _thread.start_new_thread( Left_Motor, (speed,))
-        _thread.start_new_thread( Right_Motor, (speed,))
+        #_thread.start_new_thread( Right_Motor, (speed,))
     except Exception as err:
         print("error:unable to start thread")
         print(err)
