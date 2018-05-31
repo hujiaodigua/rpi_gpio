@@ -1,6 +1,10 @@
 import serial
 import time
 
+'''
+将该代码封装成一个类中的方法，然后加到现在的控制小车程序中去
+'''
+
 def ByteToHex( bins ):
     """
     Convert a byte string to it's hex string representation e.g. for output.
@@ -21,6 +25,12 @@ data_list = []
 G_speed_list =[]
 A_speed_list =[]
 Angle_list = []
+
+i_w = 0
+i_s = 0
+i_a = 0
+i_d = 0
+i_stop = 0
 
 while True:
     #ser = serial.Serial('com19', 115200) #建立串口对象并打开
@@ -128,10 +138,53 @@ while True:
         # print('A_speedy:', A_speedy, '度/s')
         # print('A_speedz:', A_speedz, '度/s')
         # print('\n')
-        print('Angle_Roll:', Angle_Roll, '度')
-        print('Angle_Pitch:', Angle_Pitch, '度')
-        print('Angle_Yaw:', Angle_Yaw, '度')
+        #print('Angle_Roll:', Angle_Roll, '度')
+        #print('Angle_Pitch:', Angle_Pitch, '度')
+        #print('Angle_Yaw:', Angle_Yaw, '度')
         #time.sleep(1)
+
+        if Angle_Roll > 60:
+            i_W = 0
+            i_s = 0
+            i_a = i_a + 1
+            i_d = 0
+            i_stop = 0
+            if i_a ==1:
+                print('left')
+        if Angle_Roll < (-60):
+            i_w = 0
+            i_s = 0
+            i_a = 0
+            i_d = i_d + 1
+            i_stop = 0
+            if i_d == 1:
+                print('right')
+        if Angle_Pitch < (-25):
+            i_w = i_w + 1
+            i_s = 0
+            i_a = 0
+            i_d = 0
+            i_stop = 0
+            if i_w == 1:
+                print('up')
+        if Angle_Pitch > 25:
+            i_w = 0
+            i_s = i_s + 1
+            i_a = 0
+            i_d = 0
+            i_stop = 0
+            if i_s == 1:
+                print('down')
+        if (Angle_Roll > -60 and Angle_Roll < 60) and (Angle_Pitch > -25 and Angle_Pitch < 25):
+            i_w = 0
+            i_s = 0
+            i_a = 0
+            i_d = 0
+            i_stop = i_stop + 1
+            if i_stop == 1:
+                print('stop')
+                print('stop')
+
 
 
 
