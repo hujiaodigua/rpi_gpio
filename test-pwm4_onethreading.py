@@ -26,13 +26,15 @@ IN3= GPIO.PWM(IN3, 2000)  # 通道为 24 频率为 2000Hz
 GPIO.setup(IN4, GPIO.OUT)
 IN4 = GPIO.PWM(IN4, 2000)  # 通道为 25 频率为 2000Hz
 
+
 control_flag = b'null'
 speed = 0
-dc = 25
+dc = 75
 
 s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-s.connect(('192.168.0.101', 7777))
+s.connect(('192.168.1.111', 7777))
 s.send(b'connect ok')
+
 
 def Left_Motor(speed):
         global control_flag
@@ -45,6 +47,7 @@ def Left_Motor(speed):
         
         while True:
                 if control_flag == b'w': #直行
+                        #print('w')
                         #左电机正转
                         IN1.ChangeDutyCycle(dc)
                         IN2.ChangeDutyCycle(0) #全高电平
@@ -52,6 +55,7 @@ def Left_Motor(speed):
                         IN4.ChangeDutyCycle(0)                
                         
                 elif  control_flag == b'd': #右转
+                        #print('d')
                         #左电机正转
                         IN1.ChangeDutyCycle(dc)
                         IN2.ChangeDutyCycle(0)    
@@ -59,6 +63,7 @@ def Left_Motor(speed):
                         IN4.ChangeDutyCycle(0)                           
                           
                 elif  control_flag == b'a': #左转
+                        #print('a')
                         #左电机不转
                         IN1.ChangeDutyCycle(0)
                         IN2.ChangeDutyCycle(0)
@@ -66,6 +71,7 @@ def Left_Motor(speed):
                         IN4.ChangeDutyCycle(0)                        
                 
                 elif  control_flag == b's': #倒车
+                        #print('s')
                         #左电机反转
                         IN1.ChangeDutyCycle(0)
                         IN2.ChangeDutyCycle(dc)
@@ -73,6 +79,7 @@ def Left_Motor(speed):
                         IN4.ChangeDutyCycle(dc)                            
                 
                 elif  control_flag == b'q': #停车
+                        #print('q')
                         #左电机不转
                         IN1.ChangeDutyCycle(0)
                         IN2.ChangeDutyCycle(0)
@@ -110,6 +117,7 @@ def Right_Motor(speed):
                         #右电机不转
                         IN3.ChangeDutyCycle(0)
                         IN4.ChangeDutyCycle(0)
+
 
 #def tcp_recv_control_flag(speed):
 #        global control_flag
